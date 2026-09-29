@@ -1,6 +1,7 @@
 import React from 'react'
 import { render, screen } from '@testing-library/react'
 import Hero from '../../../src/components/home-page/Hero'
+import { siteConfig } from '../../../src/lib/site.config'
 
 describe('Hero', () => {
   it('renders the welcome headline', () => {
@@ -9,7 +10,7 @@ describe('Hero', () => {
     // nodes inside the same <h1>. Match the whole heading by accessible name
     // and let RTL collapse whitespace.
     expect(
-      screen.getByRole('heading', { level: 1, name: /Welcome to\s+Free For Charity/i })
+      screen.getByRole('heading', { level: 1, name: `Welcome to ${siteConfig.name}` })
     ).toBeInTheDocument()
   })
 

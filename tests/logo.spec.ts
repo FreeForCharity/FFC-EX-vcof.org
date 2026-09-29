@@ -16,15 +16,12 @@ test.describe('Logo and Image Visibility', () => {
     // Navigate to the homepage
     await page.goto('/')
 
-    // Find the logo in the Header
-    // The logo is in a Link element that points to "/" with img alt text
-    const headerLogo = page.locator(`header a[href="/"] img[alt="${testConfig.logo.headerAlt}"]`)
+    // No charity logo yet: the header's home link shows the charity name as
+    // text (never another organization's logo image).
+    const headerLogo = page.locator('header a[href="/"]', { hasText: testConfig.logo.headerAlt })
 
-    // Verify the logo exists
-    await expect(headerLogo).toBeVisible()
-
-    // Verify the logo has the correct alt text
-    await expect(headerLogo).toHaveAttribute('alt', testConfig.logo.headerAlt)
+    // Verify the name is shown
+    await expect(headerLogo.first()).toBeVisible()
   })
 
   test('should display hero section image', async ({ page }) => {
@@ -46,11 +43,11 @@ test.describe('Logo and Image Visibility', () => {
     await page.goto('/')
 
     // Find both images
-    const headerLogo = page.locator(`header a[href="/"] img[alt="${testConfig.logo.headerAlt}"]`)
+    const headerLogo = page.locator('header a[href="/"]', { hasText: testConfig.logo.headerAlt })
     const heroImage = page.locator(`img[alt="${testConfig.logo.heroAlt}"]`)
 
     // Verify both are visible simultaneously
-    await expect(headerLogo).toBeVisible()
+    await expect(headerLogo.first()).toBeVisible()
     await expect(heroImage).toBeVisible()
   })
 })
