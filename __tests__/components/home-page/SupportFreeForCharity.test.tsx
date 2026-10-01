@@ -5,7 +5,7 @@ import Support from '../../../src/components/home-page/SupportFreeForCharity'
 describe('SupportFreeForCharity', () => {
   it('renders the section heading', () => {
     render(<Support />)
-    expect(screen.getByRole('heading', { name: /Support Free For Charity/i })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: /Support Our Mission/i })).toBeInTheDocument()
   })
 
   it('mounts under the #donate section landmark id', () => {

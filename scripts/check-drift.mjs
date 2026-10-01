@@ -554,6 +554,13 @@ const FFC_IDENTITY_PATTERNS = [
   { re: /[A-Za-z0-9._%+-]+@freeforcharity\.org/i, label: 'a @freeforcharity.org email address' },
 ]
 
+// Pages that ARE Free For Charity's own documents, published on every site
+// under FFC's name by design — not leftover template branding (ported from
+// FreeForCharity/FFC-IN-FFC_Single_Page_Template). Exempted by exact path only,
+// so the same identity anywhere else — including the charity's own
+// /donation-policy — is still an error.
+const FFC_OWN_DOCUMENTS = new Set(['src/app/free-for-charity-donation-policy/page.tsx'])
+
 // A child site that customizes its footer with a hardcoded "Built with Free For
 // Charity" platform credit may keep it. Allow ONLY those specific lines (the
 // credit text, the exact attribution href, and the FFC donation-policy label —
@@ -599,6 +606,7 @@ async function checkBrandIdentity() {
   const files = await walk(SRC_DIR, (n) => /\.(tsx?|jsx?)$/.test(n))
   for (const full of files) {
     const rel = relative(ROOT, full)
+    if (FFC_OWN_DOCUMENTS.has(rel.split(sep).join('/'))) continue
     let body
     try {
       body = await readFile(full, 'utf8')

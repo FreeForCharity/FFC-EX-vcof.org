@@ -19,6 +19,7 @@ jest.mock('@/data/team', () => ({
 }))
 
 import { siteConfig } from '@/lib/site.config'
+import { restoreSiteConfig } from '../helpers/site-identity'
 import Header from '@/components/header'
 import Footer from '@/components/footer'
 
@@ -28,7 +29,12 @@ describe('nav links respect section visibility', () => {
     showEvents: siteConfig.sections.showEvents,
     sourcesConfigured: process.env.EVENTS_SOURCES_CONFIGURED,
   }
+  beforeEach(() => {
+    // The empty-team cases: not pending (a pending team keeps its section).
+    siteConfig.pending = []
+  })
   afterEach(() => {
+    restoreSiteConfig()
     siteConfig.sections.showPrograms = original.showPrograms
     siteConfig.sections.showEvents = original.showEvents
     if (original.sourcesConfigured === undefined) {
@@ -45,12 +51,6 @@ describe('nav links respect section visibility', () => {
     expect(screen.queryAllByText('Programs')).toHaveLength(0)
     // A section that does not self-hide keeps its link.
     expect(screen.queryAllByText('Mission').length).toBeGreaterThan(0)
-  })
-
-  it('Header keeps the Programs link when the flag is on', () => {
-    siteConfig.sections.showPrograms = true
-    render(<Header />)
-    expect(screen.queryAllByText('Programs').length).toBeGreaterThan(0)
   })
 
   it('Footer drops Team, Programs, and Events links when hidden', () => {

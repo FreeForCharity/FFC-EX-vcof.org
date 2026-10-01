@@ -1,8 +1,6 @@
 import React from 'react'
 import { render } from '@testing-library/react'
 import { siteConfig } from '@/lib/site.config'
-import EndowmentFeatures from '../../../src/components/home-page/Endowment-Features'
-import OurPrograms from '../../../src/components/home-page/Our-Programs'
 import Events from '../../../src/components/home-page/Events'
 
 // Self-hiding behavior (FFC-Cloudflare-Automation#816 Part B): the FFC-specific
@@ -28,18 +26,6 @@ describe('home-page section visibility flags', () => {
     } else {
       process.env.EVENTS_SOURCES_CONFIGURED = original.sourcesConfigured
     }
-  })
-
-  it('Endowment-Features renders nothing when showEndowment is false', () => {
-    siteConfig.sections.showEndowment = false
-    const { container } = render(<EndowmentFeatures />)
-    expect(container).toBeEmptyDOMElement()
-  })
-
-  it('Our-Programs renders nothing when showPrograms is false', () => {
-    siteConfig.sections.showPrograms = false
-    const { container } = render(<OurPrograms />)
-    expect(container).toBeEmptyDOMElement()
   })
 
   it('Events renders nothing when showEvents is false', () => {

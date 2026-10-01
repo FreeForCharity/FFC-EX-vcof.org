@@ -18,17 +18,12 @@ test.describe('Image Loading', () => {
     // Navigate to the homepage
     await page.goto('/')
 
-    // Find the logo images
-    const headerLogo = page.locator(`header a[href="/"] img[alt="${testConfig.logo.headerAlt}"]`)
+    // The header shows the charity name as text (no logo image yet); the hero
+    // image must load.
     const heroImage = page.locator(`img[alt="${testConfig.logo.heroAlt}"]`)
 
-    // Verify both images are visible (meaning they loaded successfully)
-    await expect(headerLogo).toBeVisible()
+    // Verify the image is visible (meaning it loaded successfully)
     await expect(heroImage).toBeVisible()
-
-    // Verify the header logo has a src attribute
-    const headerSrc = await headerLogo.getAttribute('src')
-    expect(headerSrc).toBeTruthy()
 
     // Verify the hero image has a src attribute
     const heroSrc = await heroImage.getAttribute('src')

@@ -2,7 +2,7 @@ import React from 'react'
 import { render, screen } from '@testing-library/react'
 import { axe, toHaveNoViolations } from 'jest-axe'
 import Footer from '../../src/components/footer'
-import { siteConfig } from '../../src/lib/site.config'
+import { isPending, PENDING_TEXT, siteConfig } from '../../src/lib/site.config'
 
 // Extend Jest matchers
 expect.extend(toHaveNoViolations)
@@ -42,18 +42,30 @@ describe('Footer component', () => {
     expect(screen.getByText(new RegExp(currentYear.toString()))).toBeInTheDocument()
   })
 
-  it('should have GuideStar profile link', () => {
-    render(<Footer />)
-    const guidestarLink = screen.getByText(/GuideStar Profile/i)
-    expect(guidestarLink).toBeInTheDocument()
+  it('links the GuideStar profile only when one is configured, else shows the placeholder', () => {
+    const { container } = render(<Footer />)
+    if (siteConfig.guidestar.profileUrl) {
+      expect(screen.getByText(/GuideStar Profile/i)).toBeInTheDocument()
+    } else {
+      // Never another organization's profile: no guidestar.org link at all.
+      expect(container.innerHTML).not.toContain('guidestar.org')
+      if (isPending('guidestar')) {
+        expect(screen.getByText('GuideStar / Candid Profile')).toBeInTheDocument()
+      }
+    }
   })
 
-  it('should have email contact link', () => {
+  it('links the contact email, or shows the placeholder while it is pending', () => {
     render(<Footer />)
-    // Look for email link
     const links = screen.getAllByRole('link')
     const emailLink = links.find((link) => link.getAttribute('href')?.includes('mailto:'))
-    expect(emailLink).toBeDefined()
+    if (isPending('email')) {
+      expect(emailLink).toBeUndefined()
+      const slot = screen.getByText('E-mail').parentElement as HTMLElement
+      expect(slot).toHaveTextContent(PENDING_TEXT)
+    } else {
+      expect(emailLink).toHaveAttribute('href', `mailto:${siteConfig.contactEmail}`)
+    }
   })
 
   it('renders the EIN from siteConfig', () => {
@@ -61,8 +73,12 @@ describe('Footer component', () => {
     expect(screen.getByText(`${siteConfig.name} EIN: ${siteConfig.ein}`)).toBeInTheDocument()
   })
 
-  it('renders the phone number from siteConfig as a tel link', () => {
-    render(<Footer />)
+  it('renders the phone number from siteConfig as a tel link, or no tel: link while pending', () => {
+    const { container } = render(<Footer />)
+    if (isPending('phone') || !siteConfig.phone.tel) {
+      expect(container.querySelector('a[href^="tel:"]')).toBeNull()
+      return
+    }
     const telLink = screen
       .getAllByRole('link')
       .find((link) => link.getAttribute('href') === `tel:${siteConfig.phone.tel}`)

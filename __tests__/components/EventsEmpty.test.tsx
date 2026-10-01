@@ -11,6 +11,7 @@ jest.mock(
 )
 
 import Events from '../../src/components/home-page/Events'
+import { siteConfig } from '../../src/lib/site.config'
 
 describe('Events empty state', () => {
   // With NO sources configured and an empty snapshot the whole section
@@ -35,9 +36,12 @@ describe('Events empty state', () => {
     expect(
       screen.getByRole('heading', { name: /no upcoming events right now/i })
     ).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: /follow us on facebook/i })).toHaveAttribute(
-      'target',
-      '_blank'
-    )
+    // The Facebook follow link renders only for a configured page (none yet).
+    const follow = screen.queryByRole('link', { name: /follow us on facebook/i })
+    if (siteConfig.integrations.eventsFacebookPageUrl) {
+      expect(follow).toHaveAttribute('target', '_blank')
+    } else {
+      expect(follow).toBeNull()
+    }
   })
 })

@@ -2,6 +2,7 @@ import React from 'react'
 import { render, screen } from '@testing-library/react'
 import { axe, toHaveNoViolations } from 'jest-axe'
 import Header from '../../src/components/header'
+import { siteConfig } from '../../src/lib/site.config'
 
 // Extend Jest matchers
 expect.extend(toHaveNoViolations)
@@ -17,10 +18,12 @@ describe('Header component', () => {
     expect(screen.getByRole('banner')).toBeInTheDocument()
   })
 
-  it('should display the Free For Charity logo', () => {
+  it('should display the charity name in place of a logo', () => {
     render(<Header />)
-    // Check for logo image with alt text
-    expect(screen.getByAltText('Free For Charity')).toBeInTheDocument()
+    // No charity logo yet: the name is shown as text, never another
+    // organization's logo image.
+    expect(screen.getByText(siteConfig.name).closest('a')).toHaveAttribute('href', '/')
+    expect(screen.queryByRole('img')).not.toBeInTheDocument()
   })
 
   it('should display Home navigation link', () => {

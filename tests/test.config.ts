@@ -16,16 +16,6 @@ import { siteConfig } from '../src/lib/site.config'
 
 export const testConfig = {
   /**
-   * Mission Video Configuration
-   * Used in: tests/mission-video.spec.ts
-   */
-  missionVideo: {
-    ariaLabel: 'Free For Charity mission video',
-    playLabel: 'Play the Free For Charity mission video',
-    title: "Learn about Free For Charity's mission to help nonprofits reduce costs",
-  },
-
-  /**
    * Application Form Configuration
    * Used in: tests/application-form.spec.ts
    */
@@ -81,7 +71,7 @@ export const testConfig = {
    * Used in: tests/copyright.spec.ts
    */
   copyright: {
-    text: 'All Rights Are Reserved by Free For Charity a US 501c3 Non Profit',
+    text: `All Rights Are Reserved by ${siteConfig.name}${siteConfig.taxStatusLabel.trim() ? ` ${siteConfig.taxStatusLabel.trim()}` : ''}`,
     searchText: 'All Rights Are Reserved',
     // The permanent "Supported by" attribution (FFC footer standard) — sourced
     // from siteConfig.supportedBy, which is required and always rendered.
@@ -126,9 +116,9 @@ export const testConfig = {
    * Used in: tests/logo.spec.ts
    */
   logo: {
-    headerAlt: 'Free For Charity',
+    headerAlt: siteConfig.name,
     heroAlt: 'Hero image',
-    navBarAriaLabel: 'Free For Charity home',
+    navBarAriaLabel: `${siteConfig.name} home`,
   },
 
   /**

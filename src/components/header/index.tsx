@@ -2,13 +2,11 @@
 
 import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
-import Image from 'next/image'
 import { FiMenu } from 'react-icons/fi'
 import { LiaSearchSolid } from 'react-icons/lia'
 import { RxCross2 } from 'react-icons/rx'
-import { assetPath } from '@/lib/assetPath'
 import { siteConfig } from '@/lib/site.config'
-import { configuredTeam } from '@/data/team'
+import { teamSectionVisible } from '@/lib/section-visibility'
 
 interface MenuItem {
   label: string
@@ -25,10 +23,8 @@ const SCROLL_OFFSET = 100
 const ALL_MENU_ITEMS: MenuItem[] = [
   { label: 'Home', path: '/#hero' },
   { label: 'Mission', path: '/#mission' },
-  { label: 'Programs', path: '/#programs' },
   { label: 'Volunteer', path: '/#volunteer' },
   { label: 'Donate', path: '/#donate' },
-  { label: 'FAQ', path: '/#faq' },
   { label: 'Team', path: '/#team' },
 ]
 const SCROLL_SPY_SECTIONS = ALL_MENU_ITEMS.map((item) => item.path.replace('/#', '')).filter(
@@ -42,13 +38,12 @@ const Header: React.FC = () => {
   const [activeSection, setActiveSection] = useState<string>('')
 
   // Drop nav entries whose section self-hides so we never link to a missing
-  // #anchor (Programs -> sections.showPrograms; Team -> configuredTeam, i.e. at
-  // least one member with a populated name — matches the Team section's guard).
+  // #anchor (Team shows while at least one member has a populated name, or while
+  // the team is pending — the same guard the Team section uses).
   // Built directly each render so it reflects the current config; the scroll-spy
   // uses the stable module-level SCROLL_SPY_SECTIONS instead.
   const menuItems: MenuItem[] = ALL_MENU_ITEMS.filter((item) => {
-    if (item.path === '/#programs') return siteConfig.sections.showPrograms
-    if (item.path === '/#team') return configuredTeam.length > 0
+    if (item.path === '/#team') return teamSectionVisible()
     return true
   })
 
@@ -110,16 +105,15 @@ const Header: React.FC = () => {
               className={`transition-all duration-300 ${isScrolled ? 'w-[110px]' : 'w-[150px]'}`}
             >
               <Link href="/" onClick={handleLinkClick} className="block">
-                <Image
-                  src={assetPath('/Images/logo.webp')}
-                  alt={siteConfig.name}
-                  width={686}
-                  height={234}
-                  priority
-                  className={`w-auto max-w-none object-contain transition-all duration-300 ${
-                    isScrolled ? 'h-7' : 'h-11'
+                {/* No charity logo yet: show the name as text rather than
+                  another organization's logo. */}
+                <span
+                  className={`block font-semibold leading-tight transition-all duration-300 ${
+                    isScrolled ? 'text-xs' : 'text-sm'
                   }`}
-                />
+                >
+                  {siteConfig.name}
+                </span>
               </Link>
             </div>
 
